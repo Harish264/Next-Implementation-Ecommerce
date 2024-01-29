@@ -1,6 +1,6 @@
 "use client";
 
-import { getProductList, selectProductsState, setProducts } from "@/redux/slices/productSlice";
+import { getProductList, setProducts } from "@/redux/slices/productSlice";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,22 +8,24 @@ import { useDispatch, useSelector } from "react-redux";
 const PLPpage = () => {
   const [data, setData] = useState([]);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     dispatch(getProductList())
       .unwrap()
       .then((res) => {
-        console.log("RES",res)
+        console.log("RES", res);
         setData(res);
-        dispatch(setProducts(res))
+        dispatch(setProducts(res));
       });
-  },[]);
-
+  }, []);
 
   return (
     <div className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
       {data.map((productData, index) => (
-        <div key={productData.id} className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
+        <div
+          key={productData.id}
+          className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
+        >
           <Link href={"#"}>
             <img
               src={productData.image}

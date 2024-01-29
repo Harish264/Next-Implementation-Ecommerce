@@ -1,23 +1,41 @@
 "use client";
-
 import {
-  getPDPproduct
+  getPDPproduct,
+  postAddtoCart,
+  setAddToCart,
 } from "@/redux/slices/productSlice";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 const PDPpage = ({ params }) => {
   const [pdpData, setPdpData] = useState({});
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter()
   useEffect(() => {
     const payload = params.productall[1];
     dispatch(getPDPproduct(payload))
       .unwrap()
       .then((res) => {
         setPdpData(res);
-        console.log(res);
+        console.log("RES",res)
       });
   }, []);
+  const handleAddToCart = () => {
+    dispatch(setAddToCart({ pdpData: pdpData, quantity: 1 }));
+    setIsAddedToCart(true);
+     // Update local storage
+    //  const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    //  const newItem = { pdpData, quantity: 1 };
+    //  const updatedCart = [...cartItems, newItem];
+    //  localStorage.setItem("cart", JSON.stringify(updatedCart));
+    // const payload ={
+    //   productId:pdpData.id,
+    //   quantity:1
+    // }
+    // dispatch(postAddtoCart(payload))
+  };
   return (
     <div className="bg-gray-100 dark:bg-gray-800 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,7 +80,7 @@ const PDPpage = ({ params }) => {
             ) : null}
             {pdpData &&
             (pdpData.category?.includes("men") ||
-            pdpData.category?.includes("women")) ? (
+              pdpData.category?.includes("women")) ? (
               <div className="mb-4">
                 <span className="font-bold text-gray-700 dark:text-gray-300">
                   Select Size:
@@ -96,9 +114,21 @@ const PDPpage = ({ params }) => {
             </div>
             <div className="flex -mx-2 mb-4 mt-5">
               <div className="w-1/2 px-2">
-                <button className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700">
-                  Add to Cart
-                </button>
+              {isAddedToCart ? (
+          <button
+          onClick={() => router.push('/cart')}
+            className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+          >
+            Go to Cart
+          </button>
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+          >
+            Add to Cart
+          </button>
+        )}
               </div>
               <div className="w-1/2 px-2">
                 <button className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
